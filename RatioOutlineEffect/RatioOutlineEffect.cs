@@ -17,8 +17,8 @@ namespace RatioOutlineEffect
         public Animation StrokeThicknessRate { get; } = new Animation(7, 0, 1000);
 
         [Display(GroupName = "縁取り（比率）", Name = "ぼかし", Description = "線をぼかす")]
-        [AnimationSlider("F1", "px", 0, 5)]
-        public Animation Blur { get; } = new Animation(0, 0, 1000);
+        [AnimationSlider("F1", "%", 0, 5)]
+        public Animation BlurRate { get; } = new Animation(0, 0, 1000);
 
         [Display(GroupName = "縁取り（比率）", Name = "縁のみ", Description = "縁のみ")]
         [ToggleSlider]
@@ -63,6 +63,6 @@ namespace RatioOutlineEffect
             return new RatioOutlineEffectProcessor(devices, this);
         }
 
-        protected override IEnumerable<IAnimatable> GetAnimatables() => [StrokeThicknessRate, Blur, X, Y, Opacity, Zoom, Rotation, StrokeBruch];
+        protected override IEnumerable<IAnimatable> GetAnimatables() => [StrokeThicknessRate, BlurRate, X, Y, Opacity, Zoom, Rotation, StrokeBruch];
     }
 }

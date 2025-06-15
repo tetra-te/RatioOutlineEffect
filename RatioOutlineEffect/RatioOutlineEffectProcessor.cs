@@ -137,7 +137,7 @@ namespace RatioOutlineEffect
             strokeThickness = Math.Min(strokeThickness, 500);
             SetAnimationValue(outlineItem.StrokeThickness, strokeThickness);
 
-            var blur = param.Blur.GetValue(frame, length, fps);
+            var blur = size * param.BlurRate.GetValue(frame, length, fps) / 100;
             SetAnimationValue(outlineItem.Blur, blur);
 
             outlineItem.IsOutlineOnly = param.IsOutlineOnly;
