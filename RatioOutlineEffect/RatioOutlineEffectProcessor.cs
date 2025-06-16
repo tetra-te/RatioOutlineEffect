@@ -119,7 +119,7 @@ namespace RatioOutlineEffect
                     size = voiceItem.Character.FontSize.GetValue(frame, length, fps);
                 }
             }
-            else if (item is not ShapeItem)
+            else if (item is ShapeItem)
             {
                 var shapeItem = (ShapeItem)item;
                 var sizeAndAspectShapeParameter = (SizeAndAspectShapeParameterBase)shapeItem.ShapeParameter;
