@@ -41,15 +41,12 @@ namespace RatioOutlineEffect
 
             var size = 0d;
 
-            if (item is TextItem)
+            if (item is TextItem textItem)
             {
-                var textItem = (TextItem)item;
                 size = textItem.FontSize.GetValue(frame, length, fps);
             }
-            else if (item is VoiceItem)
+            else if (item is VoiceItem voiceItem)
             {
-                var voiceItem = (VoiceItem)item;
-
                 if (voiceItem.JimakuVisibility == JimakuVisibility.Custom)
                 {
                     size = voiceItem.FontSize.GetValue(frame, length, fps);
@@ -59,11 +56,26 @@ namespace RatioOutlineEffect
                     size = voiceItem.Character.FontSize.GetValue(frame, length, fps);
                 }
             }
-            else if (item is ShapeItem)
+            else if (item is ShapeItem shapeItem)
             {
-                var shapeItem = (ShapeItem)item;
-                var sizeAndAspectShapeParameter = (SizeAndAspectShapeParameterBase)shapeItem.ShapeParameter;
-                size = sizeAndAspectShapeParameter.Size.GetValue(frame, length, fps);
+                if (shapeItem.ShapeParameter is SizeAndAspectShapeParameterBase sa)
+                {
+                    if (sa.SizeMode == SizeMode.SizeAspect)
+                        size = sa.Size.GetValue(frame, length, fps);
+                    else
+                        size = Math.Sqrt(sa.Width.GetValue(frame, length, fps) * sa.Height.GetValue(frame, length, fps));
+                }
+
+                if (shapeItem.ShapeParameter is TimerShapeParameter t)
+                    size = t.FontSize.GetValue(frame, length, fps);
+
+                if (shapeItem.ShapeParameter.GetType().FullName == "YukkuriMovieMaker.Shape.LineShapeParameter" &&
+                    shapeItem.ShapeParameter.GetType().GetProperty("Thickness", BindingFlags.Public | BindingFlags.Instance)?.GetValue(shapeItem.ShapeParameter) is Animation thickness)
+                    size = thickness.GetValue(frame, length, fps);
+
+                if (shapeItem.ShapeParameter.GetType().FullName == "YukkuriMovieMaker.Plugin.Community.Shape.NumberText.NumberTextParameter" &&
+                    shapeItem.ShapeParameter.GetType().GetProperty("FontSize", BindingFlags.Public | BindingFlags.Instance)?.GetValue(shapeItem.ShapeParameter) is Animation fontSize)
+                    size = fontSize.GetValue(frame, length, fps);
             }
             else
             {
