@@ -37,7 +37,19 @@ namespace RatioOutlineEffect
             var length = effectDescription.ItemDuration.Frame;
             var fps = effectDescription.FPS;
 
-            var item = DataStore.GetItem(effectDescription);
+            var scene = DataStore.GetScene(effectDescription.SceneId);
+
+            if (scene is null)
+                return effectDescription.DrawDescription;
+
+            var timeline = scene.Timeline;
+            var items = timeline.Items;
+
+            var layer = effectDescription.Layer;
+            var itemPosition = effectDescription.TimelinePosition.Frame - frame;
+
+            var item = items.Where(i => i.Layer == layer && i.Frame == itemPosition)
+                            .FirstOrDefault();
 
             var size = 0d;
 
@@ -65,17 +77,27 @@ namespace RatioOutlineEffect
                     else
                         size = Math.Sqrt(sa.Width.GetValue(frame, length, fps) * sa.Height.GetValue(frame, length, fps));
                 }
-
-                if (shapeItem.ShapeParameter is TimerShapeParameter t)
+                else if (shapeItem.ShapeParameter is TimerShapeParameter t)
+                {
                     size = t.FontSize.GetValue(frame, length, fps);
-
-                if (shapeItem.ShapeParameter.GetType().FullName == "YukkuriMovieMaker.Shape.LineShapeParameter" &&
+                }
+                else if (shapeItem.ShapeParameter.GetType().FullName == "YukkuriMovieMaker.Shape.LineShapeParameter" &&
                     shapeItem.ShapeParameter.GetType().GetProperty("Thickness", BindingFlags.Public | BindingFlags.Instance)?.GetValue(shapeItem.ShapeParameter) is Animation thickness)
+                {
                     size = thickness.GetValue(frame, length, fps);
-
-                if (shapeItem.ShapeParameter.GetType().FullName == "YukkuriMovieMaker.Plugin.Community.Shape.NumberText.NumberTextParameter" &&
+                }
+                else if (shapeItem.ShapeParameter.GetType().FullName == "YukkuriMovieMaker.Plugin.Community.Shape.NumberText.NumberTextParameter" &&
                     shapeItem.ShapeParameter.GetType().GetProperty("FontSize", BindingFlags.Public | BindingFlags.Instance)?.GetValue(shapeItem.ShapeParameter) is Animation fontSize)
+                {
                     size = fontSize.GetValue(frame, length, fps);
+                }
+                else
+                {
+                    var bounds = devices.DeviceContext.GetImageLocalBounds(input);
+                    var width = bounds.Right - bounds.Left;
+                    var height = bounds.Bottom - bounds.Top;
+                    size = Math.Sqrt(width * height);
+                }
             }
             else
             {

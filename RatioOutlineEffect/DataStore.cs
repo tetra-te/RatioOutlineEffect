@@ -1,23 +1,22 @@
 ﻿using System.Collections.Concurrent;
-using YukkuriMovieMaker.Player.Video;
-using YukkuriMovieMaker.Project.Items;
+using YukkuriMovieMaker.Project;
 
 namespace RatioOutlineEffect
 {
     internal static class DataStore
     {
-        private static ConcurrentDictionary<(Guid, int), IItem> items = new();
+        private static ConcurrentDictionary<Guid, Scene> scenes = new();
 
-        public static void SaveItem(TimelineItemSourceDescription desc, IItem item)
+        public static void SaveScene(Scene scene)
         {
-            items[(desc.SceneId, desc.Layer)] = item;
+            scenes[scene.ID] = scene;
         }
 
-        public static IItem? GetItem(EffectDescription desc)
+        public static Scene? GetScene(Guid sceneId)
         {
-            IItem? item;
-            items.TryGetValue((desc.SceneId, desc.Layer), out item);
-            return item;
+            Scene? scene;
+            scenes.TryGetValue(sceneId, out scene);
+            return scene;
         }
     }
 }
