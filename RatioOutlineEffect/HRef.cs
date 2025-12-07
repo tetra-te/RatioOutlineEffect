@@ -9,7 +9,7 @@ namespace RatioOutlineEffect
     {
         static string harmonyPath = Path.Combine(AppDirectories.PluginDirectory, "RatioOutlineEffect", "lib.har.ymmelib");
 
-        static AssemblyLoadContext context = new LoadContext(harmonyPath);
+        static AssemblyLoadContext context = new LoadContext();
 
         static Assembly assembly = context.LoadFromAssemblyPath(harmonyPath);
 
