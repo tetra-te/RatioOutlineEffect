@@ -1,10 +1,7 @@
-﻿using System.Collections.Immutable;
-using System.Reflection;
-using System.Windows;
+﻿using System.Reflection;
 using Vortice.Direct2D1;
 using YukkuriMovieMaker.Commons;
 using YukkuriMovieMaker.Player.Video;
-using YukkuriMovieMaker.Project;
 using YukkuriMovieMaker.Project.Effects;
 using YukkuriMovieMaker.Project.Items;
 
