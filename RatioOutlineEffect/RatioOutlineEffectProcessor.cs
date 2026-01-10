@@ -2,6 +2,7 @@
 using Vortice.Direct2D1;
 using YukkuriMovieMaker.Commons;
 using YukkuriMovieMaker.Player.Video;
+using YukkuriMovieMaker.Project;
 using YukkuriMovieMaker.Project.Effects;
 using YukkuriMovieMaker.Project.Items;
 
@@ -34,7 +35,9 @@ namespace RatioOutlineEffect
             var length = effectDescription.ItemDuration.Frame;
             var fps = effectDescription.FPS;
 
-            var scene = DataStore.GetScene(effectDescription.SceneId);
+            var sceneInfo = effectDescription.Scenes.FirstOrDefault(s => s.ID == effectDescription.SceneId);
+
+            var scene = sceneInfo is Scene s ? s : null;
 
             if (scene is null)
                 return effectDescription.DrawDescription;
