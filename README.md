@@ -28,5 +28,5 @@
 [MIT License](./LICENSE)
 
 ## 使用ライブラリ
-[Harmony](https://github.com/pardeike/Harmony)  
+過去のバージョンでは[Harmony](https://github.com/pardeike/Harmony)を使用しています。  
 Harmonyのライセンスについては[licenses/Harmony.txt](licenses/Harmony.txt)を参照してください。
