@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Windows.Controls;
 using Vortice.Direct2D1;
 using YukkuriMovieMaker.Commons;
 using YukkuriMovieMaker.Player.Video;
@@ -35,61 +36,87 @@ namespace RatioOutlineEffect
             var length = effectDescription.ItemDuration.Frame;
             var fps = effectDescription.FPS;
 
-            var sceneInfo = effectDescription.Scenes.FirstOrDefault(s => s.ID == effectDescription.SceneId);
-
-            var scene = sceneInfo is Scene s ? s : null;
-
-            if (scene is null)
-                return effectDescription.DrawDescription;
-
-            var timeline = scene.Timeline;
-            var items = timeline.Items;
-
-            var layer = effectDescription.Layer;
-            var itemPosition = effectDescription.TimelinePosition.Frame - frame;
-
-            var item = items.Where(i => i.Layer == layer && i.Frame == itemPosition)
-                            .FirstOrDefault();
-
             var size = 0d;
 
-            if (item is TextItem textItem)
+            var a = true;
+            while (a)
             {
-                size = textItem.FontSize.GetValue(frame, length, fps);
-            }
-            else if (item is VoiceItem voiceItem)
-            {
-                if (voiceItem.JimakuVisibility == JimakuVisibility.Custom)
+                a = false;
+
+                var sceneInfo = effectDescription.Scenes.FirstOrDefault(s => s.ID == effectDescription.SceneId);
+
+                var scene = sceneInfo is Scene s ? s : null;
+
+                if (scene is null)
                 {
-                    size = voiceItem.FontSize.GetValue(frame, length, fps);
+                    break;
                 }
-                else
+
+                var items = scene.Timeline.Items;
+
+                var layer = effectDescription.Layer;
+                var itemPosition = effectDescription.TimelinePosition.Frame - frame;
+
+                var item = items.FirstOrDefault(i => i.Layer == layer && i.Frame == itemPosition);
+
+                if (item is TextItem textItem)
                 {
-                    size = voiceItem.Character.FontSize.GetValue(frame, length, fps);
+                    size = textItem.FontSize.GetValue(frame, length, fps);
+                    break;
                 }
-            }
-            else if (item is ShapeItem shapeItem)
-            {
-                if (shapeItem.ShapeParameter is SizeAndAspectShapeParameterBase sa)
+                else if (item is VoiceItem voiceItem)
                 {
-                    if (sa.SizeMode == SizeMode.SizeAspect)
-                        size = sa.Size.GetValue(frame, length, fps);
+                    if (voiceItem.JimakuVisibility == JimakuVisibility.Custom)
+                    {
+                        size = voiceItem.FontSize.GetValue(frame, length, fps);
+                        break;
+                    }
                     else
-                        size = Math.Sqrt(sa.Width.GetValue(frame, length, fps) * sa.Height.GetValue(frame, length, fps));
+                    {
+                        size = voiceItem.Character.FontSize.GetValue(frame, length, fps);
+                        break;
+                    }
                 }
-                else if (shapeItem.ShapeParameter is TimerShapeParameter t)
+                else if (item is ShapeItem shapeItem)
                 {
-                    size = t.FontSize.GetValue(frame, length, fps);
-                }
-                else if (shapeItem.ShapeParameter.GetType().FullName == "YukkuriMovieMaker.Shape.LineShapeParameter" &&
-                    shapeItem.ShapeParameter.GetType().GetProperty("Thickness", BindingFlags.Public | BindingFlags.Instance)?.GetValue(shapeItem.ShapeParameter) is Animation thickness)
-                {
-                    size = thickness.GetValue(frame, length, fps);
-                }
-                else if (shapeItem.ShapeParameter.GetType().FullName == "YukkuriMovieMaker.Plugin.Community.Shape.NumberText.NumberTextParameter" &&
-                    shapeItem.ShapeParameter.GetType().GetProperty("FontSize", BindingFlags.Public | BindingFlags.Instance)?.GetValue(shapeItem.ShapeParameter) is Animation fontSize)
-                {
-                    size = fontSize.GetValue(frame, length, fps);
+                    if (shapeItem.ShapeParameter is SizeAndAspectShapeParameterBase sa)
+                    {
+                        if (sa.SizeMode == SizeMode.SizeAspect)
+                        {
+                            size = sa.Size.GetValue(frame, length, fps);
+                            break;
+                        }
+                        else
+                        {
+                            size = Math.Sqrt(sa.Width.GetValue(frame, length, fps) * sa.Height.GetValue(frame, length, fps));
+                            break;
+                        }
+                    }
+                    else if (shapeItem.ShapeParameter is TimerShapeParameter t)
+                    {
+                        size = t.FontSize.GetValue(frame, length, fps);
+                        break;
+                    }
+                    else if (shapeItem.ShapeParameter.GetType().FullName == "YukkuriMovieMaker.Shape.LineShapeParameter" &&
+                        shapeItem.ShapeParameter.GetType().GetProperty("Thickness", BindingFlags.Public | BindingFlags.Instance)?.GetValue(shapeItem.ShapeParameter) is Animation thickness)
+                    {
+                        size = thickness.GetValue(frame, length, fps);
+                        break;
+                    }
+                    else if (shapeItem.ShapeParameter.GetType().FullName == "YukkuriMovieMaker.Plugin.Community.Shape.NumberText.NumberTextParameter" &&
+                        shapeItem.ShapeParameter.GetType().GetProperty("FontSize", BindingFlags.Public | BindingFlags.Instance)?.GetValue(shapeItem.ShapeParameter) is Animation fontSize)
+                    {
+                        size = fontSize.GetValue(frame, length, fps);
+                        break;
+                    }
+                    else
+                    {
+                        var bounds = devices.DeviceContext.GetImageLocalBounds(input);
+                        var width = bounds.Right - bounds.Left;
+                        var height = bounds.Bottom - bounds.Top;
+                        size = Math.Sqrt(width * height);
+                        break;
+                    }
                 }
                 else
                 {
@@ -97,14 +124,8 @@ namespace RatioOutlineEffect
                     var width = bounds.Right - bounds.Left;
                     var height = bounds.Bottom - bounds.Top;
                     size = Math.Sqrt(width * height);
+                    break;
                 }
-            }
-            else
-            {
-                var bounds = devices.DeviceContext.GetImageLocalBounds(input);
-                var width = bounds.Right - bounds.Left;
-                var height = bounds.Bottom - bounds.Top;
-                size = Math.Sqrt(width * height);
             }
 
             var strokeThickness = size * param.StrokeThicknessRate.GetValue(frame, length, fps) / 100;
