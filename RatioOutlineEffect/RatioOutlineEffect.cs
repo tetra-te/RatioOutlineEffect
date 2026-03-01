@@ -7,7 +7,7 @@ using YukkuriMovieMaker.Plugin.Effects;
 
 namespace RatioOutlineEffect
 {
-    [VideoEffect("縁取り（比率）", ["装飾"], [], IsEffectItemSupported = false, IsAviUtlSupported = false)]
+    [VideoEffect("縁取り（比率）", ["装飾"], ["アウトライン", "outline"], IsEffectItemSupported = false, IsAviUtlSupported = false)]
     internal class RatioOutlineEffect : VideoEffectBase
     {        
         public override string Label => "縁取り（比率）";
@@ -19,6 +19,14 @@ namespace RatioOutlineEffect
         [Display(GroupName = "縁取り（比率）", Name = "ぼかし", Description = "線をぼかす")]
         [AnimationSlider("F1", "%", 0, 5)]
         public Animation BlurRate { get; } = new Animation(0, 0, 1000);
+
+        [Display(GroupName = "縁取り（比率）", Name = "品質", Description = "品質")]
+        [AnimationSlider("F0", "", 3, 64)]
+        public Animation Quality { get; } = new Animation(64, 3, 256);
+
+        [Display(GroupName = "縁取り（比率）", Name = "なめらかさ", Description = "なめらかさ")]
+        [AnimationSlider("F1", "%", 0, 100)]
+        public Animation Smoothness { get; } = new Animation(100, 0, 100);
 
         [Display(GroupName = "縁取り（比率）", Name = "縁のみ", Description = "縁のみ")]
         [ToggleSlider]
@@ -63,6 +71,6 @@ namespace RatioOutlineEffect
             return new RatioOutlineEffectProcessor(devices, this);
         }
 
-        protected override IEnumerable<IAnimatable> GetAnimatables() => [StrokeThicknessRate, BlurRate, X, Y, Opacity, Zoom, Rotation, StrokeBruch];
+        protected override IEnumerable<IAnimatable> GetAnimatables() => [StrokeThicknessRate, BlurRate, Quality, Smoothness, X, Y, Opacity, Zoom, Rotation, StrokeBruch];
     }
 }

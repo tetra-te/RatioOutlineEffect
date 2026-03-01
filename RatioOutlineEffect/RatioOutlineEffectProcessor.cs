@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Windows.Controls;
 using Vortice.Direct2D1;
 using YukkuriMovieMaker.Commons;
 using YukkuriMovieMaker.Player.Video;
@@ -13,7 +12,7 @@ namespace RatioOutlineEffect
     {
         readonly RatioOutlineEffect param;
         
-        readonly OutlineEffect outlineItem;
+        readonly OutlineLiteEffect outlineItem;
         readonly IVideoEffectProcessor outlineProcessor;
 
         ID2D1Image? input;
@@ -25,7 +24,7 @@ namespace RatioOutlineEffect
         {
             param= item;
             this.devices= devices;
-            outlineItem = new OutlineEffect();
+            outlineItem = new OutlineLiteEffect();
             outlineProcessor = outlineItem.CreateVideoEffect(devices);
             Output = outlineProcessor.Output;
         }      
@@ -134,6 +133,12 @@ namespace RatioOutlineEffect
 
             var blur = size * param.BlurRate.GetValue(frame, length, fps) / 100;
             SetAnimationValue(outlineItem.Blur, blur);
+
+            var quality = param.Quality.GetValue(frame, length, fps);
+            SetAnimationValue(outlineItem.Quality, quality);
+
+            var smoothness = param.Smoothness.GetValue(frame, length, fps);
+            SetAnimationValue(outlineItem.Smoothness, smoothness);
 
             outlineItem.IsOutlineOnly = param.IsOutlineOnly;
 
