@@ -29,7 +29,7 @@ namespace RatioOutlineEffect
             outlineItem = (IVideoEffect)Activator.CreateInstance(Reflection.OutlineEffect);
             outlineProcessor = outlineItem.CreateVideoEffect(devices);
             Output = outlineProcessor.Output;
-        }      
+        }
 
         public DrawDescription Update(EffectDescription effectDescription)
         {
