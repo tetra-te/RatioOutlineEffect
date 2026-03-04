@@ -218,7 +218,6 @@ namespace RatioOutlineEffect
         public void Dispose()
         {
             outlineProcessor.Dispose();
-            Output.Dispose();
         }
 
         public void SetInput(ID2D1Image? input)
